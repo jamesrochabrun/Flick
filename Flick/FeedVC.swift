@@ -10,9 +10,15 @@ import UIKit
 
 class FeedVC: UICollectionViewController {
     
-    fileprivate let listDataSource = ListDataSource()
-    //fileprivate let gridDataSource = GridDataSource()
-    
+    fileprivate var movies = [Movie]() {
+        didSet {
+            DispatchQueue.main.async { [weak self] in
+                self?.collectionView?.reloadData()
+                self?.refreshControl.endRefreshing()
+            }
+        }
+    }
+    var endpoint: String = ""
     let gridLayout = GridLayout()
     var isGrid = false
     
@@ -36,34 +42,50 @@ class FeedVC: UICollectionViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         collectionView?.backgroundColor = #colorLiteral(red: 0.1764705926, green: 0.4980392158, blue: 0.7568627596, alpha: 1)
-        collectionView?.register(HorizontalMovieCell.self)
-        collectionView?.dataSource = listDataSource
+        collectionView?.register(MovieCell.self)
         collectionView?.contentInset = UIEdgeInsets(top: 50, left: 0, bottom: 0, right: 0)
         collectionView?.insertSubview(refreshControl, at: 0)
-        NotificationCenter.default.addObserver(self, selector: #selector(reloadTable), name: NSNotification.Name.successDataNotification, object: nil)
         setUpViews()
+        getMoviesData()
     }
     
     private func setUpViews() {
         view.addSubview(segmentedControl)
-
         segmentedControl.widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
         segmentedControl.heightAnchor.constraint(equalToConstant: 50).isActive = true
         segmentedControl.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
         segmentedControl.topAnchor.constraint(equalTo: view.topAnchor, constant: 64).isActive = true
     }
     
-    func reloadTable() {
-        collectionView?.reloadData()
-       // customIndicator.stopAnimating()
+    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return movies.count
     }
     
-    
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        NotificationCenter.default.removeObserver(self)
+    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(forIndexPath: indexPath) as MovieCell
+        let movie = movies[indexPath.item]
+        let movieViewModel = MovieViewModel(model: movie)
+        cell.displayMovieInCell(using: movieViewModel)
+        return cell
+    }
+        
+    func getMoviesData() {
+        
+        MovieService.sharedInstance.getNowPlayingMovies(with: endpoint) { [weak self] (result) in
+            switch result {
+            case .Success(let movies):
+                var tempMovies = [Movie]()
+                for movie in movies {
+                    if let movie = movie {
+                        tempMovies.append(movie)
+                    }
+                }
+                self?.movies = tempMovies
+            case .Error(let error):
+                print(error)
+            }
+        }
     }
     
     func changeLayout() {
@@ -71,12 +93,9 @@ class FeedVC: UICollectionViewController {
         if segmentedControl.selectedSegmentIndex == 0 {
             self.collectionView?.collectionViewLayout.invalidateLayout()
             isGrid = false
-            
             UIView.animate(withDuration: 0.2) { () -> Void in
                 DispatchQueue.main.async {
-                  //  self.collectionView?.delegate = self
                     self.collectionView?.setCollectionViewLayout(UICollectionViewFlowLayout(), animated: true)
-                  //  self.collectionView?.reloadData()
                 }
             }
         } else {
@@ -84,24 +103,19 @@ class FeedVC: UICollectionViewController {
             isGrid = true
             UIView.animate(withDuration: 0.2) { () -> Void in
                 DispatchQueue.main.async {
-                    //self.collectionView?.delegate = nil
                     self.collectionView?.setCollectionViewLayout(self.gridLayout, animated: true)
-                    //self.collectionView?.reloadData()
-
                 }
             }
         }
     }
-
     
     func refresh(_ refreshControl: UIRefreshControl) {
-       // getMoviesData()
-        refreshControl
+        getMoviesData()
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
-        let movie = listDataSource.getMovies()[indexPath.item]
+        let movie = movies[indexPath.item]
         let movieDetailVC = MovieDetailVC()
         movieDetailVC.movie = movie
         self.navigationController?.pushViewController(movieDetailVC, animated: true)
@@ -127,7 +141,7 @@ extension FeedVC: UICollectionViewDelegateFlowLayout {
 
         } else {
             
-            let movie = listDataSource.getMovies()[indexPath.item]
+            let movie = movies[indexPath.item]
             let estimatedHeightForOverview = estimatedHeightFor(text: movie.overview)
             size.height = estimatedHeightForOverview + 100
             size.width = view.frame.width
@@ -149,60 +163,6 @@ extension FeedVC: UICollectionViewDelegateFlowLayout {
         let estimatedFrame = NSString(string: text).boundingRect(with: size, options: .usesLineFragmentOrigin, attributes: attributes, context: nil)
         return estimatedFrame.height
     }
-}
-
-class ListDataSource: NSObject, UICollectionViewDataSource {
-    
-    
-    private var movies = [Movie]() {
-        didSet {
-            NotificationCenter.default.post(name: Notification.Name.successDataNotification, object: nil)
-        }
-    }
-    
-    override init() {
-        super.init()
-        getMoviesData()
-    }
-    
-    func getMoviesData() {
-        
-        MovieService.sharedInstance.getNowPlayingMovies { [weak self] (result) in
-            switch result {
-            case .Success(let movies):
-                var tempMovies = [Movie]()
-                for movie in movies {
-                    if let movie = movie {
-                        tempMovies.append(movie)
-                    }
-                }
-                self?.movies = tempMovies
-            case .Error(let error):
-                print(error)
-            }
-        }
-    }
-    
-    func getMovies() -> [Movie] {
-        return movies
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return movies.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(forIndexPath: indexPath) as HorizontalMovieCell
-        let movie = movies[indexPath.item]
-        let movieViewModel = MovieViewModel(model: movie)
-        cell.displayMovieInCell(using: movieViewModel)
-        return cell
-    }
-}
-
-extension Notification.Name {
-    static let successDataNotification = Notification.Name("dataSuccess")
-    static let dismissViewNotification = Notification.Name("dismiss")
 }
 
 

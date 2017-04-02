@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-class HorizontalMovieCell: BaseCollectionviewCell {
+class MovieCell: BaseCollectionviewCell {
     
     var listLayouConstraints: [NSLayoutConstraint] = [NSLayoutConstraint]()
     var gridLayoutConstraints: [NSLayoutConstraint] = [NSLayoutConstraint]()
@@ -34,7 +34,6 @@ class HorizontalMovieCell: BaseCollectionviewCell {
     
     let messageTextView: UITextView = {
         let textView = UITextView()
-        textView.text = "iphone ipad ios programming the best, now working in swift 3"
         textView.font = UIFont.preferredFont(forTextStyle: UIFontTextStyle.subheadline)
         textView.backgroundColor = .clear
         textView.translatesAutoresizingMaskIntoConstraints = false
@@ -87,20 +86,20 @@ class HorizontalMovieCell: BaseCollectionviewCell {
             isGrid = true
             NSLayoutConstraint.deactivate(listLayouConstraints)
             NSLayoutConstraint.activate(gridLayoutConstraints)
-            UIView.animate(withDuration: 0.3, animations: {
-                self.movieTitleLabel.alpha = 0
-                self.messageTextView.alpha = 0
-                self.layoutIfNeeded()
+            UIView.animate(withDuration: 0.3, animations: { [weak self] in
+                self?.movieTitleLabel.alpha = 0
+                self?.messageTextView.alpha = 0
+                self?.layoutIfNeeded()
                 print("yes")
             })
         } else {
             isGrid = false
             NSLayoutConstraint.deactivate(gridLayoutConstraints)
             NSLayoutConstraint.activate(listLayouConstraints)
-            UIView.animate(withDuration: 0.3, animations: {
-                self.movieTitleLabel.alpha = 1
-                self.messageTextView.alpha = 1
-                self.layoutIfNeeded()
+            UIView.animate(withDuration: 0.3, animations: { [weak self] in
+                self?.movieTitleLabel.alpha = 1
+                self?.messageTextView.alpha = 1
+                self?.layoutIfNeeded()
                 print("no")
             })
         }

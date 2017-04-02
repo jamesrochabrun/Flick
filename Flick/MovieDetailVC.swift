@@ -38,12 +38,18 @@ class MovieDetailVC: UIViewController {
         return iv
     }()
     
+    let customIndicator: CustomActivityIndicator = {
+        let indicator = CustomActivityIndicator()
+        return indicator
+    }()
+    
     var movie: Movie? {
         didSet {
             if let movie = movie {
                 let movieViewModel = MovieViewModel(model: movie)
                 containerInfoView.movie = movieViewModel
                 self.posterImageView.loadImageUsingCacheWithURLString(movieViewModel.posterPathBig, placeHolder: #imageLiteral(resourceName: "placeholder"))
+                self.customIndicator.stopAnimating()
             }
         }
     }
@@ -81,6 +87,12 @@ class MovieDetailVC: UIViewController {
         containerInfoView.widthAnchor.constraint(equalTo: scrollView.widthAnchor).isActive = true
         
         scrollView.bottomAnchor.constraint(equalTo: containerInfoView.bottomAnchor, constant: Constants.UI.generalPadding + 44).isActive = true
+        
+        scrollView.addSubview(customIndicator)
+        customIndicator.heightAnchor.constraint(equalToConstant: 80).isActive = true
+        customIndicator.widthAnchor.constraint(equalToConstant: 80).isActive = true
+        customIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        customIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
     }
 }
 

@@ -61,7 +61,7 @@ struct MovieViewModel {
         
         self.title = model.title.uppercased()
         self.posterPathBig = "https://image.tmdb.org/t/p/original" + model.posterPath
-        self.posterPathSmall = "https://image.tmdb.org/t/p/w45" + model.posterPath
+        self.posterPathSmall = "https://image.tmdb.org/t/p/w342" + model.posterPath
         self.overview = model.overview
         self.releaseDate = "Release date:" + " " + model.releaseDate
         if let coverPath = model.coverPath {

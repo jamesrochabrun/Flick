@@ -52,3 +52,11 @@ extension ImageCachable where Self: UIImageView {
         }
     }
 }
+
+
+
+
+
+
+
+
