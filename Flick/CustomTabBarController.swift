@@ -30,14 +30,14 @@ class CustomTabBarController: UITabBarController {
     }
     
     
-    private func dummyNavControllerWith(title: String, imageName: String) -> UINavigationController {
-        
-        let vc = UIViewController()
-        let navC = UINavigationController(rootViewController: vc)
-        navC.tabBarItem.title = title
-        navC.tabBarItem.image = UIImage(named: imageName)
-        return navC
-    }
+//    private func dummyNavControllerWith(title: String, imageName: String) -> UINavigationController {
+//        
+//        let vc = UIViewController()
+//        let navC = UINavigationController(rootViewController: vc)
+//        navC.tabBarItem.title = title
+//        navC.tabBarItem.image = UIImage(named: imageName)
+//        return navC
+//    }
 }
 
 

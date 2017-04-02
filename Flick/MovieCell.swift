@@ -28,7 +28,7 @@ class MovieCell: BaseCollectionviewCell {
         l.translatesAutoresizingMaskIntoConstraints = false
         l.font = UIFont.preferredFont(forTextStyle: UIFontTextStyle.headline)
         l.textAlignment = .left
-        l.textColor = .white
+        l.textColor = #colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1)
         return l
     }()
     
@@ -37,7 +37,7 @@ class MovieCell: BaseCollectionviewCell {
         textView.font = UIFont.preferredFont(forTextStyle: UIFontTextStyle.subheadline)
         textView.backgroundColor = .clear
         textView.translatesAutoresizingMaskIntoConstraints = false
-        textView.textColor = .white
+        textView.textColor = #colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1)
         textView.isUserInteractionEnabled = false
         return textView
     }()

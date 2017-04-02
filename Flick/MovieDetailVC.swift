@@ -49,7 +49,7 @@ class MovieDetailVC: UIViewController {
                 let movieViewModel = MovieViewModel(model: movie)
                 containerInfoView.movie = movieViewModel
                 self.posterImageView.loadImageUsingCacheWithURLString(movieViewModel.posterPathBig, placeHolder: #imageLiteral(resourceName: "placeholder"))
-                self.customIndicator.stopAnimating()
+               // self.customIndicator.stopAnimating()
             }
         }
     }
@@ -88,7 +88,7 @@ class MovieDetailVC: UIViewController {
         
         scrollView.bottomAnchor.constraint(equalTo: containerInfoView.bottomAnchor, constant: Constants.UI.generalPadding + 44).isActive = true
         
-        scrollView.addSubview(customIndicator)
+        posterImageView.addSubview(customIndicator)
         customIndicator.heightAnchor.constraint(equalToConstant: 80).isActive = true
         customIndicator.widthAnchor.constraint(equalToConstant: 80).isActive = true
         customIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
