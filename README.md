@@ -1,6 +1,6 @@
 # Flick
 
-# Project 1 - *Name of App Here*
+# Project 1 - *My Movie App*
 
 **Flick** is a movies app using the [The Movie Database API](http://docs.themoviedb.apiary.io/#).
 
@@ -46,13 +46,14 @@ The following **additional** features are implemented:
 
 Here's a walkthrough of implemented user stories:
 
-<img src='http://i.imgur.com/link/to/your/gif/file.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img src='http://i.imgur.com/emI1B9m.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
 ## Notes
 
 Describe any challenges encountered while building the app.
+I decide to use a different approach in order to get the functionality of changing grid to list layout, by changing dynamically the layout of the Uicollectionlayout and of the cell, I am only using one class of CollectionviewController and one cell and make them reusable just by updating the constraints with animation. It needs some adjustment.
 
 ## License
 
