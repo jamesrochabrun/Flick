@@ -50,6 +50,10 @@ class MovieDetailVC: UIViewController {
                 containerInfoView.movie = movieViewModel
                 self.posterImageView.loadImageUsingCacheWithURLString(movieViewModel.posterPathBig, placeHolder: #imageLiteral(resourceName: "placeholder"), completion: { (bool) in
                     if bool {
+                        self.posterImageView.alpha = 0
+                        UIView.animate(withDuration: 0.8, animations: {
+                            self.posterImageView.alpha = 1
+                        })
                         self.customIndicator.stopAnimating()
                     }
                 })

@@ -16,7 +16,7 @@ class CustomTabBarController: UITabBarController {
         self.tabBar.barTintColor = UIColor.hexStringToUIColor(Constants.Color.appMainColor)
         self.tabBar.tintColor = .white
         
-        let layout = UICollectionViewFlowLayout()
+        let layout = GridLayout()
         let feedVC = FeedVC(collectionViewLayout: layout)
         feedVC.endpoint = "https://api.themoviedb.org/3/movie/now_playing?api_key="
         let nowPlayingNavController  = UINavigationController(rootViewController: feedVC)

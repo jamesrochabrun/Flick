@@ -24,7 +24,7 @@ class FeedVC: UICollectionViewController {
     var searchActive : Bool = false
     var endpoint: String = ""
     let gridLayout = GridLayout()
-    var isGrid = false
+    var isGrid = true
     var searchResults: [Movie] = []
     fileprivate let headerID = "headerID"
     
@@ -32,8 +32,8 @@ class FeedVC: UICollectionViewController {
         let sc = UISegmentedControl()
         sc.selectedSegmentIndex = 0
         sc.tintColor = UIColor.hexStringToUIColor(Constants.Color.appMainColor)
-        sc.insertSegment(withTitle: "List", at: 0, animated: true)
-        sc.insertSegment(withTitle: "Grid", at: 1, animated: true)
+        sc.insertSegment(withTitle: "Grid", at: 0, animated: true)
+        sc.insertSegment(withTitle: "List", at: 1, animated: true)
         sc.translatesAutoresizingMaskIntoConstraints = false
         sc.backgroundColor = .white
         sc.addTarget(self, action: #selector(changeLayout), for: .valueChanged)
@@ -64,7 +64,7 @@ class FeedVC: UICollectionViewController {
         self.navigationItem.titleView = searchBar
         collectionView?.backgroundColor = .white
         collectionView?.register(MovieCell.self)
-        collectionView?.contentInset = UIEdgeInsets(top: 35, left: 0, bottom: 0, right: 0)
+        collectionView?.contentInset = UIEdgeInsets(top: 37, left: 0, bottom: 0, right: 0)
         collectionView?.insertSubview(refreshControl, at: 0)
         segmentedControl.selectedSegmentIndex = 0
         setUpViews()
@@ -75,7 +75,7 @@ class FeedVC: UICollectionViewController {
         
         view.addSubview(segmentedControl)
         segmentedControl.widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
-        segmentedControl.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        segmentedControl.heightAnchor.constraint(equalToConstant: 35).isActive = true
         segmentedControl.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
         segmentedControl.topAnchor.constraint(equalTo: view.topAnchor, constant: 64).isActive = true
         
@@ -94,18 +94,18 @@ class FeedVC: UICollectionViewController {
         
         if segmentedControl.selectedSegmentIndex == 0 {
             self.collectionView?.collectionViewLayout.invalidateLayout()
-            isGrid = false
-            UIView.animate(withDuration: 0.2) { () -> Void in
-                DispatchQueue.main.async {
-                    self.collectionView?.setCollectionViewLayout(UICollectionViewFlowLayout(), animated: true)
-                }
-            }
-        } else {
-            self.collectionView?.collectionViewLayout.invalidateLayout()
             isGrid = true
             UIView.animate(withDuration: 0.2) { () -> Void in
                 DispatchQueue.main.async {
                     self.collectionView?.setCollectionViewLayout(self.gridLayout, animated: true)
+                }
+            }
+        } else {
+            self.collectionView?.collectionViewLayout.invalidateLayout()
+            isGrid = false
+            UIView.animate(withDuration: 0.2) { () -> Void in
+                DispatchQueue.main.async {
+                    self.collectionView?.setCollectionViewLayout(UICollectionViewFlowLayout(), animated: true)
                 }
             }
         }
@@ -120,7 +120,8 @@ class FeedVC: UICollectionViewController {
         }
     }
     
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {        
+        
         let cell = collectionView.dequeueReusableCell(forIndexPath: indexPath) as MovieCell
         var movie: Movie?
         if searchActive {
@@ -206,11 +207,10 @@ extension FeedVC: UISearchBarDelegate {
         
         if searchText != "" {
             searchActive = true
-            reloadData()
         } else {
             searchActive = false
-            reloadData()
         }
+        reloadData()
     }
     
     func filterContentFor(textToSearch: String) {
@@ -240,13 +240,10 @@ extension FeedVC: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
         var size = CGSize(width: 0, height: 0)
-        
         if isGrid {
             size.width = ((self.collectionView?.frame.size.width)! / 3.0) - 0.5
             size.height = size.width
-
         } else {
-            
             var movie: Movie?
             if searchActive {
                 movie = self.searchResults[indexPath.row]
@@ -260,7 +257,6 @@ extension FeedVC: UICollectionViewDelegateFlowLayout {
                 size.width = view.frame.width
             }
         }
-        
         return size
     }
     
