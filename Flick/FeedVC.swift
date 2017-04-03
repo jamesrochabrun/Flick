@@ -9,7 +9,7 @@
 import UIKit
 
 
-class FeedVC: UICollectionViewController, UISearchBarDelegate {
+class FeedVC: UICollectionViewController {
     
     fileprivate var movies = [Movie]() {
         didSet {
@@ -21,13 +21,12 @@ class FeedVC: UICollectionViewController, UISearchBarDelegate {
         }
     }
     
-    var shouldShowSearchResults = false
+    var searchActive : Bool = false
     var endpoint: String = ""
     let gridLayout = GridLayout()
     var isGrid = false
     var searchResults: [Movie] = []
     fileprivate let headerID = "headerID"
-    var searchController: UISearchController!
     
     lazy var segmentedControl: UISegmentedControl = {
         let sc = UISegmentedControl()
@@ -52,42 +51,33 @@ class FeedVC: UICollectionViewController, UISearchBarDelegate {
         return indicator
     }()
     
+    lazy var searchBar: UISearchBar = {
+        let searchBar = UISearchBar()
+        searchBar.sizeToFit()
+        searchBar.delegate = self
+        return searchBar
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-       // navigationController?.hidesBarsOnSwipe = true
+        
+        self.navigationItem.titleView = searchBar
         collectionView?.backgroundColor = .white
         collectionView?.register(MovieCell.self)
-        //collectionView?.contentInset = UIEdgeInsets(top: 50, left: 0, bottom: 0, right: 0)
+        collectionView?.contentInset = UIEdgeInsets(top: 40, left: 0, bottom: 0, right: 0)
         collectionView?.insertSubview(refreshControl, at: 0)
         segmentedControl.selectedSegmentIndex = 0
-        collectionView?.register(Header.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: headerID)
         setUpViews()
         getMoviesData()
     }
     
-//    func updateSearchResults(for searchController: UISearchController) {
-//        if let searchText = searchController.searchBar.text {
-//            self.filterContentFor(textToSearch: searchText)
-//            self.collectionView?.reloadData()
-//        }
-//    }
-    
-    func filterContentFor(textToSearch: String) {
-        self.searchResults = self.movies.filter({ (movie) -> Bool in
-            let nameToFind = movie.title.range(of: textToSearch, options: NSString.CompareOptions.caseInsensitive)
-            //let typeToFind = place.type.range(of: textToSearch,  options: NSString.CompareOptions.caseInsensitive)
-            //let locationToFind = place.location.range(of: textToSearch, options: NSString.CompareOptions.caseInsensitive)
-            
-            return (nameToFind != nil) //|| (typeToFind != nil) || (locationToFind != nil)
-        })
-    }
-    
     private func setUpViews() {
+        
         view.addSubview(segmentedControl)
         segmentedControl.widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
         segmentedControl.heightAnchor.constraint(equalToConstant: 50).isActive = true
         segmentedControl.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
-        segmentedControl.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -44).isActive = true
+        segmentedControl.topAnchor.constraint(equalTo: view.topAnchor, constant: 64).isActive = true
         
         collectionView?.addSubview(customIndicator)
         customIndicator.heightAnchor.constraint(equalToConstant: 80).isActive = true
@@ -96,45 +86,8 @@ class FeedVC: UICollectionViewController, UISearchBarDelegate {
         customIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
     }
     
-    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        
-        if shouldShowSearchResults {
-            return self.searchResults.count
-        } else {
-            return movies.count
-        }
-    }
-    
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(forIndexPath: indexPath) as MovieCell
-        var movie: Movie?
-        if shouldShowSearchResults{
-            movie = self.searchResults[indexPath.row]
-        } else {
-            movie = self.movies[indexPath.row]
-        }
-        
-        let movieViewModel = MovieViewModel(model: movie!)
-        cell.displayMovieInCell(using: movieViewModel)
-        return cell
-    }
-        
-    func getMoviesData() {
-        
-        MovieService.sharedInstance.getNowPlayingMovies(with: endpoint) { [weak self] (result) in
-            switch result {
-            case .Success(let movies):
-                var tempMovies = [Movie]()
-                for movie in movies {
-                    if let movie = movie {
-                        tempMovies.append(movie)
-                    }
-                }
-                self?.movies = tempMovies
-            case .Error(let error):
-                print(error)
-            }
-        }
+    func refresh(_ refreshControl: UIRefreshControl) {
+        getMoviesData()
     }
     
     func changeLayout() {
@@ -158,13 +111,58 @@ class FeedVC: UICollectionViewController, UISearchBarDelegate {
         }
     }
     
-    func refresh(_ refreshControl: UIRefreshControl) {
-        getMoviesData()
+    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        
+        if searchActive  {
+            return self.searchResults.count
+        } else {
+            return movies.count
+        }
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(forIndexPath: indexPath) as MovieCell
+        var movie: Movie?
+        if searchActive {
+            movie = self.searchResults[indexPath.row]
+        } else {
+            movie = self.movies[indexPath.row]
+        }
+        
+        if let item = movie {
+            let movieViewModel = MovieViewModel(model: item)
+            cell.displayMovieInCell(using: movieViewModel)
+        }
+        return cell
+    }
+    
+    func getMoviesData() {
+        
+        MovieService.sharedInstance.getNowPlayingMovies(with: endpoint) { [weak self] (result) in
+            switch result {
+            case .Success(let movies):
+                var tempMovies = [Movie]()
+                for movie in movies {
+                    if let movie = movie {
+                        tempMovies.append(movie)
+                    }
+                }
+                self?.movies = tempMovies
+            case .Error(let error):
+                print(error)
+            }
+        }
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
-        let movie = movies[indexPath.item]
+        searchBar.endEditing(true)
+        var movie: Movie?
+        if searchActive {
+            movie = self.searchResults[indexPath.row]
+        } else {
+            movie = self.movies[indexPath.row]
+        }
         let movieDetailVC = MovieDetailVC()
         movieDetailVC.movie = movie
         self.navigationController?.pushViewController(movieDetailVC, animated: true)
@@ -177,19 +175,54 @@ class FeedVC: UICollectionViewController, UISearchBarDelegate {
     }
 }
 
+extension FeedVC: UISearchBarDelegate {
+    
+    override func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        searchBar.endEditing(true)
+    }
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        searchActive = true
+        searchBar.endEditing(true)
+        reloadData()
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        searchActive = true;
+        self.filterContentFor(textToSearch: searchText)
+        
+        if searchText != "" {
+            searchActive = true
+            reloadData()
+        } else {
+            searchActive = false
+            reloadData()
+        }
+    }
+    
+    func filterContentFor(textToSearch: String) {
+        self.searchResults = self.movies.filter({ (movie) -> Bool in
+            let nameToFind = movie.title.range(of: textToSearch, options: NSString.CompareOptions.caseInsensitive)
+            //let typeToFind = place.type.range(of: textToSearch,  options: NSString.CompareOptions.caseInsensitive)
+            //let locationToFind = place.location.range(of: textToSearch, options: NSString.CompareOptions.caseInsensitive)
+            
+            return (nameToFind != nil) //|| (typeToFind != nil) || (locationToFind != nil)
+        })
+    }
+    
+    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+        searchBar.endEditing(true)
+    }
+    
+    func reloadData() {
+        DispatchQueue.main.async {
+            self.collectionView?.reloadData()
+        }
+    }
+}
+
 extension FeedVC: UICollectionViewDelegateFlowLayout {
     
-    override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        
-        let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: headerID, for: indexPath) as! Header
-       // header.addSubview(searchController.searchBar)
-        header.backgroundColor = .red
-        return header
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        return CGSize(width: view.frame.width, height: 80)
-    }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
@@ -198,15 +231,21 @@ extension FeedVC: UICollectionViewDelegateFlowLayout {
         if isGrid {
             size.width = ((self.collectionView?.frame.size.width)! / 3.0) - 0.5
             size.height = size.width
-            print("grid")
 
         } else {
             
-            let movie = movies[indexPath.item]
-            let estimatedHeightForOverview = estimatedHeightFor(text: movie.overview)
-            size.height = estimatedHeightForOverview + 100
-            size.width = view.frame.width
-            print("flow")
+            var movie: Movie?
+            if searchActive {
+                movie = self.searchResults[indexPath.row]
+            } else {
+                movie = self.movies[indexPath.row]
+            }
+            
+            if let item = movie {
+                let estimatedHeightForOverview = estimatedHeightFor(text: item.overview)
+                size.height = estimatedHeightForOverview + 100
+                size.width = view.frame.width
+            }
         }
         
         return size
@@ -225,24 +264,6 @@ extension FeedVC: UICollectionViewDelegateFlowLayout {
         return estimatedFrame.height
     }
 }
-
-
-
-
-
-class Header: BaseCollectionviewCell {
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-}
-
 
 
 
