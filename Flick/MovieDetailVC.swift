@@ -50,9 +50,7 @@ class MovieDetailVC: UIViewController {
                 containerInfoView.movie = movieViewModel
                 self.posterImageView.loadImageUsingCacheWithURLString(movieViewModel.posterPathBig, placeHolder: #imageLiteral(resourceName: "placeholder"), completion: { (bool) in
                     if bool {
-                        self.posterImageView.alpha = 0
                         UIView.animate(withDuration: 0.8, animations: { [weak self] in
-                            self?.posterImageView.alpha = 1
                             self?.scrollView.contentOffset = CGPoint(x: 0, y: 145)
                         })
                         self.customIndicator.stopAnimating()
