@@ -75,7 +75,9 @@ class MovieCell: BaseCollectionviewCell {
     
     
     func displayMovieInCell(using viewModel: MovieViewModel) {
-        movieImageview.loadImageUsingCacheWithURLString(viewModel.posterPathSmall, placeHolder: #imageLiteral(resourceName: "placeholder"))
+        
+        movieImageview.loadImageUsingCacheWithURLString(viewModel.posterPathSmall, placeHolder: #imageLiteral(resourceName: "placeholder")) { (bool) in
+        }
         movieTitleLabel.text = viewModel.title
         messageTextView.text = viewModel.overview
     }

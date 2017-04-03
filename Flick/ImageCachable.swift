@@ -17,12 +17,15 @@ extension UIImageView: ImageCachable {}
 
 extension ImageCachable where Self: UIImageView {
     
-    func loadImageUsingCacheWithURLString(_ URLString: String, placeHolder: UIImage?) {
+    typealias SuccessCompletion = (Bool) -> ()
+    func loadImageUsingCacheWithURLString(_ URLString: String, placeHolder: UIImage?, completion: @escaping SuccessCompletion) {
         
         self.image = nil
-        
         if let cachedImage = imageCache.object(forKey: NSString(string: URLString)) {
-            self.image = cachedImage
+            DispatchQueue.main.async {
+                self.image = cachedImage
+                completion(true)
+            }
             return
         }
         self.image = placeHolder
@@ -31,20 +34,22 @@ extension ImageCachable where Self: UIImageView {
             URLSession.shared.dataTask(with: url, completionHandler: { (data, response, error) in
                 
                 //print("RESPONSE FROM API: \(response)")
-                if error != nil {
-                    print("ERROR LOADING IMAGES FROM URL: \(error)")
-                    DispatchQueue.main.async {
-                        self.image = placeHolder
-                    }
+                guard let httpResponse = response as? HTTPURLResponse else {
                     return
                 }
-                DispatchQueue.main.async {
+                if httpResponse.statusCode == 200 {
+                    
                     if let data = data {
                         if let downloadedImage = UIImage(data: data) {
                             imageCache.setObject(downloadedImage, forKey: NSString(string: URLString))
-                            self.image = downloadedImage
+                            DispatchQueue.main.async {
+                                self.image = downloadedImage
+                                completion(true)
+                            }
                         }
                     }
+                } else {
+                    self.image = placeHolder
                 }
             }).resume()
         } else {
@@ -52,6 +57,13 @@ extension ImageCachable where Self: UIImageView {
         }
     }
 }
+
+
+
+
+
+
+
 
 
 
