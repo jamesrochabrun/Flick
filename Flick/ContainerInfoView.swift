@@ -20,7 +20,7 @@ class ContainerInfoView: BaseView {
                 dateLabel.text = releaseDate
             }
             if let coverPath = movie?.coverPath {
-                coverView.loadImageUsingCacheWithURLString(coverPath, placeHolder: nil, completion: { (bool) in
+                coverView.loadImageUsingCacheWithURLString(coverPath, placeHolder: #imageLiteral(resourceName: "placeholder"), completion: { (bool) in
                 })
             }
         }
@@ -32,7 +32,7 @@ class ContainerInfoView: BaseView {
         cv.translatesAutoresizingMaskIntoConstraints = false
         cv.blur(with: .light)
         cv.clipsToBounds = true
-        cv.opaque(with: 0.3)
+        cv.opaque(with: 0.1)
         return cv
     }()
     
