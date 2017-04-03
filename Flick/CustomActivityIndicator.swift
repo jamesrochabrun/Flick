@@ -16,7 +16,7 @@ class CustomActivityIndicator: BaseView {
         v.translatesAutoresizingMaskIntoConstraints = false
         v.layer.cornerRadius = 10
         v.clipsToBounds = true
-        v.backgroundColor = #colorLiteral(red: 0.2392156869, green: 0.6745098233, blue: 0.9686274529, alpha: 1)
+        v.backgroundColor = UIColor.hexStringToUIColor(Constants.Color.appMainColor)
         return v
     }()
     

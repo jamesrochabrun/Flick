@@ -18,8 +18,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.makeKeyAndVisible()
+        UIApplication.shared.statusBarStyle = .lightContent
         window?.rootViewController = CustomTabBarController()
-        
+        UINavigationBar.appearance().barTintColor = UIColor.hexStringToUIColor(Constants.Color.appMainColor)
+        UINavigationBar.appearance().tintColor = UIColor.white
+        UINavigationBar.appearance().titleTextAttributes = [NSForegroundColorAttributeName : UIColor.white]
         return true
     }
 

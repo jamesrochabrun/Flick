@@ -13,18 +13,21 @@ class CustomTabBarController: UITabBarController {
     
     //set up our custom VC's
     override func viewDidLoad() {
+        self.tabBar.barTintColor = UIColor.hexStringToUIColor(Constants.Color.appMainColor)
+        self.tabBar.tintColor = .white
         
         let layout = UICollectionViewFlowLayout()
         let feedVC = FeedVC(collectionViewLayout: layout)
         feedVC.endpoint = "https://api.themoviedb.org/3/movie/now_playing?api_key="
         let nowPlayingNavController  = UINavigationController(rootViewController: feedVC)
         nowPlayingNavController.tabBarItem.title = "Now Playing"
-        //recentMesaggeNavController.tabBarItem.image = #imageLiteral(resourceName: "zoomIn")
+        nowPlayingNavController.tabBarItem.image = #imageLiteral(resourceName: "rocket")
         
         let topRatedVC = FeedVC(collectionViewLayout: layout)
         topRatedVC.endpoint = "https://api.themoviedb.org/3/movie/top_rated?api_key="
         let topRatedNavController  = UINavigationController(rootViewController: topRatedVC)
         topRatedNavController.tabBarItem.title = "Top Rated"
+        topRatedNavController.tabBarItem.image = #imageLiteral(resourceName: "favorite")
         
         viewControllers = [nowPlayingNavController,topRatedNavController]
     }

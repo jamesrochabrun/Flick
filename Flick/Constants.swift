@@ -16,4 +16,8 @@ struct Constants {
         static let movieHeightHorizontalCell: CGFloat = 100
         static let generalPadding: CGFloat = 15.0
     }
+    
+    struct Color {
+        static let appMainColor: String = "#ffc107"
+    }
 }

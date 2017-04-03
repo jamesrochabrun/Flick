@@ -26,6 +26,7 @@
 		7B35D4AF1E904B9D00C86685 /* Opaqueable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B35D4AE1E904B9D00C86685 /* Opaqueable.swift */; };
 		7B35D4B31E90693300C86685 /* GridLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B35D4B21E90693300C86685 /* GridLayout.swift */; };
 		7B6014421E91CE0A00EF81E9 /* ContainerInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B6014411E91CE0A00EF81E9 /* ContainerInfoView.swift */; };
+		7B6014441E91D97900EF81E9 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B6014431E91D97900EF81E9 /* Extensions.swift */; };
 		7BA2489E1E918DA0000BE6DF /* CustomActivityIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BA2489D1E918DA0000BE6DF /* CustomActivityIndicator.swift */; };
 /* End PBXBuildFile section */
 
@@ -51,6 +52,7 @@
 		7B35D4AE1E904B9D00C86685 /* Opaqueable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Opaqueable.swift; sourceTree = "<group>"; };
 		7B35D4B21E90693300C86685 /* GridLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GridLayout.swift; sourceTree = "<group>"; };
 		7B6014411E91CE0A00EF81E9 /* ContainerInfoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContainerInfoView.swift; sourceTree = "<group>"; };
+		7B6014431E91D97900EF81E9 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		7BA2489D1E918DA0000BE6DF /* CustomActivityIndicator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomActivityIndicator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -85,6 +87,7 @@
 			isa = PBXGroup;
 			children = (
 				7B35D47F1E8F28B800C86685 /* AppDelegate.swift */,
+				7B6014431E91D97900EF81E9 /* Extensions.swift */,
 				7B35D4A61E8F44CB00C86685 /* Constants.swift */,
 				7B35D49D1E8F362900C86685 /* Protocols */,
 				7B35D49C1E8F360200C86685 /* Controller */,
@@ -228,6 +231,7 @@
 				7B35D4A11E8F366B00C86685 /* BaseCollectionVIewCell.swift in Sources */,
 				7B35D4951E8F2CB500C86685 /* JSONDownloader.swift in Sources */,
 				7B35D4A31E8F36BB00C86685 /* MovieCell.swift in Sources */,
+				7B6014441E91D97900EF81E9 /* Extensions.swift in Sources */,
 				7B35D49A1E8F35C000C86685 /* Movie.swift in Sources */,
 				7B35D4B31E90693300C86685 /* GridLayout.swift in Sources */,
 				7B35D4801E8F28B800C86685 /* AppDelegate.swift in Sources */,

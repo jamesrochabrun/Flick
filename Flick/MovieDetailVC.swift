@@ -62,6 +62,7 @@ class MovieDetailVC: UIViewController {
         view.backgroundColor = .white
         setUpViews()
     }
+    
 
     func setUpViews() {
         
@@ -98,8 +99,6 @@ class MovieDetailVC: UIViewController {
         customIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
     }
 }
-
-
 
 
 

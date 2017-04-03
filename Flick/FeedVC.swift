@@ -31,7 +31,7 @@ class FeedVC: UICollectionViewController {
     lazy var segmentedControl: UISegmentedControl = {
         let sc = UISegmentedControl()
         sc.selectedSegmentIndex = 0
-        sc.tintColor = #colorLiteral(red: 0.2392156869, green: 0.6745098233, blue: 0.9686274529, alpha: 1)
+        sc.tintColor = UIColor.hexStringToUIColor(Constants.Color.appMainColor)
         sc.insertSegment(withTitle: "List", at: 0, animated: true)
         sc.insertSegment(withTitle: "Grid", at: 1, animated: true)
         sc.translatesAutoresizingMaskIntoConstraints = false
@@ -64,7 +64,7 @@ class FeedVC: UICollectionViewController {
         self.navigationItem.titleView = searchBar
         collectionView?.backgroundColor = .white
         collectionView?.register(MovieCell.self)
-        collectionView?.contentInset = UIEdgeInsets(top: 40, left: 0, bottom: 0, right: 0)
+        collectionView?.contentInset = UIEdgeInsets(top: 35, left: 0, bottom: 0, right: 0)
         collectionView?.insertSubview(refreshControl, at: 0)
         segmentedControl.selectedSegmentIndex = 0
         setUpViews()
@@ -149,9 +149,22 @@ class FeedVC: UICollectionViewController {
                 }
                 self?.movies = tempMovies
             case .Error(let error):
-                print(error)
+                DispatchQueue.main.async {
+                    self?.showAlertWith(title: "Error", message: error.localizedDescription)
+                    self?.customIndicator.stopAnimating()
+                }
             }
         }
+    }
+    
+    func showAlertWith(title: String, message: String, style: UIAlertControllerStyle = .alert) {
+        
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: style)
+        let action = UIAlertAction(title: "OK", style: .default) { (action) in
+            self.dismiss(animated: true, completion: nil)
+        }
+        alertController.addAction(action)
+        self.present(alertController, animated: true, completion: nil)
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
