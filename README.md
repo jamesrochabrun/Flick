@@ -38,9 +38,9 @@ The following **additional** features are implemented:
 - Use basic animation
 - Create custom views
 - Custom tab bar 
-- create a custom cachable protocol to show placeholder image on loading from server
+- Create a custom cachable protocol to show placeholder image on loading from server
 - create protocol to make easier to improve reusability of reusable object (collectionviews)
-- Cells resize dynamically based on the content of the movie overview.
+- Cells height resize dynamically based on the content of the movie overview.
 
 ## Video Walkthrough
 
@@ -53,6 +53,7 @@ GIF created with [LiceCap](http://www.cockos.com/licecap/).
 ## Notes
 
 Describe any challenges encountered while building the app.
+
 I decide to use a different approach in order to get the functionality of changing grid to list layout, by changing dynamically the layout of the Uicollectionlayout and of the cell, I am only using one class of CollectionviewController and one cell and make them reusable just by updating the constraints with animation. It needs some adjustment.
 
 ## License
