@@ -56,6 +56,7 @@ struct MovieViewModel {
     let overview: String
     let releaseDate: String
     var coverPath: String?
+    var isGrid: Bool?
     
     init(model: Movie) {
         

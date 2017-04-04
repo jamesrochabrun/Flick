@@ -11,6 +11,7 @@ import UIKit
 
 class FeedVC: UICollectionViewController {
     
+    //MARK: Porperties
     fileprivate var movies = [Movie]() {
         didSet {
             DispatchQueue.main.async { [weak self] in
@@ -21,14 +22,14 @@ class FeedVC: UICollectionViewController {
         }
     }
     
-    var searchActive : Bool = false
+    fileprivate var searchActive : Bool = false
     var endpoint: String = ""
-    let gridLayout = GridLayout()
-    var isGrid = true
-    var searchResults: [Movie] = []
+    fileprivate var isGrid = true
+    fileprivate var searchResults: [Movie] = []
     fileprivate let headerID = "headerID"
     
-    lazy var segmentedControl: UISegmentedControl = {
+    //MARK: UI elements
+    private lazy var segmentedControl: UISegmentedControl = {
         let sc = UISegmentedControl()
         sc.selectedSegmentIndex = 0
         sc.tintColor = UIColor.hexStringToUIColor(Constants.Color.appMainColor)
@@ -40,36 +41,23 @@ class FeedVC: UICollectionViewController {
         return sc
     }()
     
-    lazy var refreshControl: UIRefreshControl = {
+    private lazy var refreshControl: UIRefreshControl = {
         let rf = UIRefreshControl()
         rf.addTarget(self, action: #selector(refresh(_:)), for: .valueChanged)
         return rf
     }()
     
-    let customIndicator: CustomActivityIndicator = {
+    private let customIndicator: CustomActivityIndicator = {
         let indicator = CustomActivityIndicator()
         return indicator
     }()
     
-    lazy var searchBar: UISearchBar = {
+    fileprivate lazy var searchBar: UISearchBar = {
         let searchBar = UISearchBar()
         searchBar.sizeToFit()
         searchBar.delegate = self
         return searchBar
     }()
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        self.navigationItem.titleView = searchBar
-        collectionView?.backgroundColor = .white
-        collectionView?.register(MovieCell.self)
-        collectionView?.contentInset = UIEdgeInsets(top: 37, left: 0, bottom: 0, right: 0)
-        collectionView?.insertSubview(refreshControl, at: 0)
-        segmentedControl.selectedSegmentIndex = 0
-        setUpViews()
-        getMoviesData()
-    }
     
     private func setUpViews() {
         
@@ -86,22 +74,37 @@ class FeedVC: UICollectionViewController {
         customIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
     }
     
-    func refresh(_ refreshControl: UIRefreshControl) {
+    //MARK: App lifecycle
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        self.navigationItem.titleView = searchBar
+        collectionView?.backgroundColor = .white
+        collectionView?.register(MovieCell.self)
+        collectionView?.contentInset = UIEdgeInsets(top: 37, left: 0, bottom: 0, right: 0)
+        collectionView?.insertSubview(refreshControl, at: 0)
+        segmentedControl.selectedSegmentIndex = 0
+        setUpViews()
         getMoviesData()
     }
     
-    func changeLayout() {
+    //MARK: Class handlers
+    @objc private func refresh(_ refreshControl: UIRefreshControl) {
+        getMoviesData()
+    }
+    
+    @objc fileprivate func changeLayout() {
         
         if segmentedControl.selectedSegmentIndex == 0 {
-            self.collectionView?.collectionViewLayout.invalidateLayout()
+            collectionView?.collectionViewLayout.invalidateLayout()
             isGrid = true
             UIView.animate(withDuration: 0.2) { () -> Void in
                 DispatchQueue.main.async {
-                    self.collectionView?.setCollectionViewLayout(self.gridLayout, animated: true)
+                    self.collectionView?.setCollectionViewLayout(GridLayout(), animated: true)
                 }
             }
         } else {
-            self.collectionView?.collectionViewLayout.invalidateLayout()
+            collectionView?.collectionViewLayout.invalidateLayout()
             isGrid = false
             UIView.animate(withDuration: 0.2) { () -> Void in
                 DispatchQueue.main.async {
@@ -111,33 +114,7 @@ class FeedVC: UICollectionViewController {
         }
     }
     
-    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        
-        if searchActive  {
-            return self.searchResults.count
-        } else {
-            return movies.count
-        }
-    }
-    
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {        
-        
-        let cell = collectionView.dequeueReusableCell(forIndexPath: indexPath) as MovieCell
-        var movie: Movie?
-        if searchActive {
-            movie = self.searchResults[indexPath.row]
-        } else {
-            movie = self.movies[indexPath.row]
-        }
-        
-        if let item = movie {
-            let movieViewModel = MovieViewModel(model: item)
-            cell.displayMovieInCell(using: movieViewModel)
-        }
-        return cell
-    }
-    
-    func getMoviesData() {
+    private func getMoviesData() {
         
         MovieService.sharedInstance.getNowPlayingMovies(with: endpoint) { [weak self] (result) in
             switch result {
@@ -158,7 +135,7 @@ class FeedVC: UICollectionViewController {
         }
     }
     
-    func showAlertWith(title: String, message: String, style: UIAlertControllerStyle = .alert) {
+    private func showAlertWith(title: String, message: String, style: UIAlertControllerStyle = .alert) {
         
         let alertController = UIAlertController(title: title, message: message, preferredStyle: style)
         let action = UIAlertAction(title: "OK", style: .default) { (action) in
@@ -167,6 +144,10 @@ class FeedVC: UICollectionViewController {
         alertController.addAction(action)
         self.present(alertController, animated: true, completion: nil)
     }
+}
+
+//MARK: collectionviewdelegate
+extension FeedVC {
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
@@ -182,13 +163,40 @@ class FeedVC: UICollectionViewController {
         self.navigationController?.pushViewController(movieDetailVC, animated: true)
     }
 
+}
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+//MARK: Datasource
+extension FeedVC {
+    
+    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        
+        if searchActive  {
+            return self.searchResults.count
+        } else {
+            return movies.count
+        }
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        
+        let cell = collectionView.dequeueReusableCell(forIndexPath: indexPath) as MovieCell
+        var movie: Movie?
+        if searchActive {
+            movie = self.searchResults[indexPath.row]
+        } else {
+            movie = self.movies[indexPath.row]
+        }
+        
+        if let item = movie {
+            var movieViewModel = MovieViewModel(model: item)
+            movieViewModel.isGrid = self.isGrid
+            cell.displayMovieInCell(using: movieViewModel)
+        }
+        return cell
     }
 }
 
+//MARK: uisearchbardelegate
 extension FeedVC: UISearchBarDelegate {
     
     override func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
@@ -227,15 +235,15 @@ extension FeedVC: UISearchBarDelegate {
         searchBar.endEditing(true)
     }
     
-    func reloadData() {
+    private func reloadData() {
         DispatchQueue.main.async {
             self.collectionView?.reloadData()
         }
     }
 }
 
+//MARK: Layout
 extension FeedVC: UICollectionViewDelegateFlowLayout {
-    
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
@@ -244,18 +252,26 @@ extension FeedVC: UICollectionViewDelegateFlowLayout {
             size.width = ((self.collectionView?.frame.size.width)! / 3.0) - 0.5
             size.height = size.width
         } else {
-            var movie: Movie?
-            if searchActive {
-                movie = self.searchResults[indexPath.row]
-            } else {
-                movie = self.movies[indexPath.row]
-            }
-            
-            if let item = movie {
-                let estimatedHeightForOverview = estimatedHeightFor(text: item.overview)
-                size.height = estimatedHeightForOverview + 100
-                size.width = view.frame.width
-            }
+        
+            size = getHeightFromMoviein(indexPath)
+        }
+        return size
+    }
+    
+    private func getHeightFromMoviein(_ indexPath: IndexPath) -> CGSize {
+        
+        var size = CGSize(width: 0, height: 0)
+        var movie: Movie?
+        if searchActive {
+            movie = self.searchResults[indexPath.row]
+        } else {
+            movie = self.movies[indexPath.row]
+        }
+        
+        if let item = movie {
+            let estimatedHeightForOverview = estimatedHeightFor(text: item.overview)
+            size.height = estimatedHeightForOverview + 100
+            size.width = view.frame.width
         }
         return size
     }

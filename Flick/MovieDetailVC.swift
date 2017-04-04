@@ -65,9 +65,8 @@ class MovieDetailVC: UIViewController {
         view.backgroundColor = .white
         setUpViews()
     }
-    
 
-    func setUpViews() {
+    private func setUpViews() {
         
         view.addSubview(posterImageView)
         posterImageView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
