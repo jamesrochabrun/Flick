@@ -24,7 +24,7 @@ class FeedVC: UICollectionViewController {
     
     fileprivate var searchActive : Bool = false
     var endpoint: String = ""
-    fileprivate var isGrid = true
+    fileprivate var isGrid = false
     fileprivate var searchResults: [Movie] = []
     fileprivate let headerID = "headerID"
     
@@ -33,8 +33,8 @@ class FeedVC: UICollectionViewController {
         let sc = UISegmentedControl()
         sc.selectedSegmentIndex = 0
         sc.tintColor = UIColor.hexStringToUIColor(Constants.Color.appMainColor)
-        sc.insertSegment(withTitle: "Grid", at: 0, animated: true)
-        sc.insertSegment(withTitle: "List", at: 1, animated: true)
+        sc.insertSegment(withTitle: "List", at: 0, animated: true)
+        sc.insertSegment(withTitle: "Grid", at: 1, animated: true)
         sc.translatesAutoresizingMaskIntoConstraints = false
         sc.backgroundColor = .white
         sc.addTarget(self, action: #selector(changeLayout), for: .valueChanged)
@@ -97,18 +97,18 @@ class FeedVC: UICollectionViewController {
         
         if segmentedControl.selectedSegmentIndex == 0 {
             collectionView?.collectionViewLayout.invalidateLayout()
-            isGrid = true
-            UIView.animate(withDuration: 0.2) { () -> Void in
-                DispatchQueue.main.async {
-                    self.collectionView?.setCollectionViewLayout(GridLayout(), animated: true)
-                }
-            }
-        } else {
-            collectionView?.collectionViewLayout.invalidateLayout()
             isGrid = false
             UIView.animate(withDuration: 0.2) { () -> Void in
                 DispatchQueue.main.async {
                     self.collectionView?.setCollectionViewLayout(UICollectionViewFlowLayout(), animated: true)
+                }
+            }
+        } else {            
+            collectionView?.collectionViewLayout.invalidateLayout()
+            isGrid = true
+            UIView.animate(withDuration: 0.2) { () -> Void in
+                DispatchQueue.main.async {
+                    self.collectionView?.setCollectionViewLayout(GridLayout(), animated: true)
                 }
             }
         }
@@ -162,7 +162,6 @@ extension FeedVC {
         movieDetailVC.movie = movie
         self.navigationController?.pushViewController(movieDetailVC, animated: true)
     }
-
 }
 
 //MARK: Datasource
@@ -252,7 +251,6 @@ extension FeedVC: UICollectionViewDelegateFlowLayout {
             size.width = ((self.collectionView?.frame.size.width)! / 3.0) - 0.5
             size.height = size.width
         } else {
-        
             size = getHeightFromMoviein(indexPath)
         }
         return size

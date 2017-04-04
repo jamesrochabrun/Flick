@@ -87,36 +87,35 @@ class MovieCell: BaseCollectionviewCell {
         }
         movieTitleLabel.text = viewModel.title
         messageTextView.text = viewModel.overview
-        changeLayout(viewModel.isGrid!)
+        DispatchQueue.main.async { [weak self] in
+            self?.changeLayout(viewModel.isGrid)
+        }
     }
     
     private func prepareCellForGrid() {
         
-        DispatchQueue.main.async {
-            NSLayoutConstraint.deactivate(self.listLayouConstraints)
-            NSLayoutConstraint.activate(self.gridLayoutConstraints)
-            UIView.animate(withDuration: 0.3, animations: { [weak self] in
-                self?.movieTitleLabel.alpha = 0
-                self?.messageTextView.alpha = 0
-                self?.layoutIfNeeded()
-            })
-        }
+        NSLayoutConstraint.deactivate(self.listLayouConstraints)
+        NSLayoutConstraint.activate(self.gridLayoutConstraints)
+        UIView.animate(withDuration: 0.3, animations: { [weak self] in
+            self?.movieTitleLabel.alpha = 0
+            self?.messageTextView.alpha = 0
+            self?.layoutIfNeeded()
+        })
     }
     
     private func prepareCellForList() {
         
-        DispatchQueue.main.async {
-            NSLayoutConstraint.deactivate(self.gridLayoutConstraints)
-            NSLayoutConstraint.activate(self.listLayouConstraints)
-            UIView.animate(withDuration: 0.3, animations: { [weak self] in
-                self?.movieTitleLabel.alpha = 1
-                self?.messageTextView.alpha = 1
-                self?.layoutIfNeeded()
-            })
-        }
+        NSLayoutConstraint.deactivate(self.gridLayoutConstraints)
+        NSLayoutConstraint.activate(self.listLayouConstraints)
+        UIView.animate(withDuration: 0.3, animations: { [weak self] in
+            self?.movieTitleLabel.alpha = 1
+            self?.messageTextView.alpha = 1
+            self?.layoutIfNeeded()
+        })
     }
     
     private func changeLayout(_ gridLayout: Bool) {
+        
         if gridLayout {
             prepareCellForGrid()
         } else {
@@ -126,10 +125,10 @@ class MovieCell: BaseCollectionviewCell {
     
     override func willTransition(from oldLayout: UICollectionViewLayout, to newLayout: UICollectionViewLayout) {
         
-        if oldLayout is GridLayout {
-            prepareCellForList()
+        if newLayout is GridLayout {
+            prepareCellForGrid()
         } else {
-           prepareCellForGrid()
+            prepareCellForList()
         }
     }
 }

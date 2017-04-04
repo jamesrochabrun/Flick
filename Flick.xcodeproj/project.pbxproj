@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7B05C5AA1E94292E00B251A0 /* MovieViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B05C5A91E94292E00B251A0 /* MovieViewModel.swift */; };
 		7B35D4801E8F28B800C86685 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B35D47F1E8F28B800C86685 /* AppDelegate.swift */; };
 		7B35D4821E8F28B800C86685 /* FeedVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B35D4811E8F28B800C86685 /* FeedVC.swift */; };
 		7B35D4871E8F28B800C86685 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7B35D4861E8F28B800C86685 /* Assets.xcassets */; };
@@ -31,6 +32,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		7B05C5A91E94292E00B251A0 /* MovieViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MovieViewModel.swift; sourceTree = "<group>"; };
 		7B35D47C1E8F28B800C86685 /* Flick.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Flick.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7B35D47F1E8F28B800C86685 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7B35D4811E8F28B800C86685 /* FeedVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedVC.swift; sourceTree = "<group>"; };
@@ -119,6 +121,7 @@
 			isa = PBXGroup;
 			children = (
 				7B35D4991E8F35C000C86685 /* Movie.swift */,
+				7B05C5A91E94292E00B251A0 /* MovieViewModel.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -235,6 +238,7 @@
 				7B35D49A1E8F35C000C86685 /* Movie.swift in Sources */,
 				7B35D4B31E90693300C86685 /* GridLayout.swift in Sources */,
 				7B35D4801E8F28B800C86685 /* AppDelegate.swift in Sources */,
+				7B05C5AA1E94292E00B251A0 /* MovieViewModel.swift in Sources */,
 				7B35D4A51E8F3AA100C86685 /* ImageCachable.swift in Sources */,
 				7B35D4AF1E904B9D00C86685 /* Opaqueable.swift in Sources */,
 				7B35D4AD1E904B9900C86685 /* Blurrable.swift in Sources */,
