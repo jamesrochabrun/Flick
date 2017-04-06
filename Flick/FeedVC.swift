@@ -179,18 +179,10 @@ extension FeedVC {
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         let cell = collectionView.dequeueReusableCell(forIndexPath: indexPath) as MovieCell
-        var movie: Movie?
-        if searchActive {
-            movie = self.searchResults[indexPath.row]
-        } else {
-            movie = self.movies[indexPath.row]
-        }
-        
-        if let item = movie {
-            var movieViewModel = MovieViewModel(model: item)
-            movieViewModel.isGrid = self.isGrid
-            cell.displayMovieInCell(using: movieViewModel)
-        }
+        let movie = searchActive ? searchResults[indexPath.row] : movies[indexPath.row]
+        var movieViewModel = MovieViewModel(model: movie)
+        movieViewModel.isGrid = self.isGrid
+        cell.displayMovieInCell(using: movieViewModel)
         return cell
     }
 }
